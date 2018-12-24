@@ -1,4 +1,5 @@
 
+
 #  proxyCleave, Proxy Bioinformatics © 2018
 #  Written By Andrew Lamothe
 
@@ -9,8 +10,8 @@ from tkinter import filedialog
 enzymes = {'EcoRI': 'GAATTC', 'EcoRII': 'CCWGG', 'BamHI': 'GGATTC', 'HIND': 'AAGCTT', 'Nspl': 'RCATG'}
 
 degenerate_nucleotides = {'R': ['G', 'A'], 'Y': ['T', 'C'], 'M': ['A', 'C'], 'K': ['G', 'T'], 'S': ['G', 'C'],
-                         'W': ['A', 'T'], 'H': ['A', 'C', 'T'], 'B': ['G', 'T', 'C'], 'V': ['G', 'C', 'A'],
-                         'D': ['G', 'A', 'T'], 'N': ['G', 'A', 'T', 'C']}
+                          'W': ['A', 'T'], 'H': ['A', 'C', 'T'], 'B': ['G', 'T', 'C'], 'V': ['G', 'C', 'A'],
+                          'D': ['G', 'A', 'T'], 'N': ['G', 'A', 'T', 'C']}
 
 root = Tk()
 
@@ -31,10 +32,12 @@ cleave_list = []
 
 def set_cleave():
 
-    global cleave, cleave_get, cleave_list
+    global cleave, cleave_get, cleave_list, degenerate
 
     cleave_get = cleave_entry.get()
     cleave = cleave_get
+    cleave = cleave.upper()
+    print(cleave, type(cleave))
 
     for specificity in enzymes.keys():
 
@@ -61,47 +64,47 @@ def set_cleave():
 
 def slash_handler():
 
-   global cleave
+    global cleave
 
-   for element in cleave:
+    for element in cleave:
 
-       if element == '/':
+        if element == '/':
 
-           cleave = slash_finder()
+            cleave = slash_finder()
 
-           original_slash_list = cleave
+            original_slash_list = cleave
 
-           print('original_slash_list', original_slash_list, type(original_slash_list))
+            print('original_slash_list', original_slash_list, type(original_slash_list))
 
-           for thing in cleave:
+            for thing in cleave:
 
-               print('thing', thing, type(thing))
+                print('thing', thing, type(thing))
 
-               for bit in thing:
+                for bit in thing:
 
-                   if bit in degenerate_nucleotides.keys():
+                    if bit in degenerate_nucleotides.keys():
 
-                       cleave = thing
+                        cleave = thing
 
-                       print('cleave = thing', cleave, type(cleave))
+                        print('cleave = thing', cleave, type(cleave))
 
-                       index_of_thing = original_slash_list.index(thing)
+                        index_of_thing = original_slash_list.index(thing)
 
-                       print('index of thing', index_of_thing, type(index_of_thing))
+                        print('index of thing', index_of_thing, type(index_of_thing))
 
-                       print(original_slash_list[index_of_thing], type(original_slash_list[index_of_thing]))
+                        print(original_slash_list[index_of_thing], type(original_slash_list[index_of_thing]))
 
-                       degenerate_slash_list = degenerates_input()
+                        degenerate_slash_list = degenerates_input()
 
-                       del original_slash_list[index_of_thing]
+                        del original_slash_list[index_of_thing]
 
-                       print('cleave', cleave, type(cleave))
+                        print('cleave', cleave, type(cleave))
 
-                       original_slash_list = original_slash_list + degenerate_slash_list
+                        original_slash_list = original_slash_list + degenerate_slash_list
 
-                       print('cleave', cleave, type(cleave))
+                        print('cleave', cleave, type(cleave))
 
-                   return original_slash_list
+                return original_slash_list
 
 
 #  ----------------------------------check for degenerates in cleave------------------------------------------------
@@ -123,26 +126,26 @@ def degenerates_input():
 
                 first_degenerate_iterant = cleave.replace(cleave[degenerate_nucleotide_position], first_degenerate)
 
-                degenerate_list = [first_degenerate_iterant]
-
                 if len(degenerate_value_list) >= 2:
 
                     second_degenerate = degenerate_value_list[1]
 
                     second_degenerate_iterant = cleave.replace(cleave[degenerate_nucleotide_position],
-                                                              second_degenerate)
+                                                               second_degenerate)
 
                     degenerate_list = [first_degenerate_iterant, second_degenerate_iterant]
+
+                    print(second_degenerate, second_degenerate_iterant, degenerate_list)
 
                     if len(degenerate_value_list) >= 3:
 
                         third_degenerate = degenerate_value_list[2]
 
                         third_degenerate_iterant = cleave.replace(cleave[degenerate_nucleotide_position],
-                                                                 third_degenerate)
+                                                                  third_degenerate)
 
                         degenerate_list = [first_degenerate_iterant, second_degenerate_iterant,
-                                          third_degenerate_iterant]
+                                           third_degenerate_iterant]
 
                         print(third_degenerate, third_degenerate_iterant, degenerate_list)
 
@@ -151,7 +154,7 @@ def degenerates_input():
                             fourth_degenerate = degenerate_value_list[3]
 
                             fourth_degenerate_iterant = cleave.replace(cleave[degenerate_nucleotide_position],
-                                                                      fourth_degenerate)
+                                                                       fourth_degenerate)
 
                             degenerate_list = [first_degenerate_iterant, second_degenerate_iterant,
                                                third_degenerate_iterant, fourth_degenerate_iterant]
@@ -166,39 +169,39 @@ deg_processed_list = []
 
 def degenerate_handler():
 
-    global cleave
+    global cleave, degenerate
 
     global deg_processed_list
 
-for degenerate in degenerate_nucleotides.keys():
+    for degenerate in degenerate_nucleotides.keys():
 
-    if degenerate in cleave:
+        if degenerate in cleave:
 
-        print('if degenerate in cleave', cleave, type(cleave))
+            print('if degenerate in cleave', cleave, type(cleave))
 
-        deg_processed_cleave_1 = degenerates_input()
+            deg_processed_cleave_1 = degenerates_input()
 
-        print('deg_processed_cleave_1', deg_processed_cleave_1, type(deg_processed_cleave_1))
+            print('deg_processed_cleave_1', deg_processed_cleave_1, type(deg_processed_cleave_1))
 
-        deg_processed_list = deg_processed_list + deg_processed_cleave_1
+            deg_processed_list = deg_processed_list + deg_processed_cleave_1
 
-        print('deg_processed_list', deg_processed_list, type(deg_processed_list))
+            print('deg_processed_list', deg_processed_list, type(deg_processed_list))
 
-        for component in deg_processed_list:
+            for component in deg_processed_list:
 
-            if degenerate in component:
+                if degenerate in component:
 
-                cleave = component
+                    cleave = component
 
-                deg_processed_cleave_2 = degenerates_input()
+                    deg_processed_cleave_2 = degenerates_input()
 
-                deg_processed_list = deg_processed_list + deg_processed_cleave_2
+                    deg_processed_list = deg_processed_list + deg_processed_cleave_2
 
-                print(deg_processed_list)
+                    print(deg_processed_list)
+
+                continue
 
             continue
-
-        continue
 
 
 cleave_entry = StringVar()
@@ -227,9 +230,9 @@ ORF = 0
 
 def set_orf():
 
-   global ORF_get, ORF
-   ORF_get = ORF_entry.get()
-   ORF = ORF_get
+    global ORF_get, ORF
+    ORF_get = ORF_entry.get()
+    ORF = ORF_get
 
 
 ORF1 = Entry(root, textvariable=ORF_entry, width=20).grid(column=2, row=0)
@@ -327,9 +330,11 @@ def main():
 
         search = sequence.read()
 
+        search = search.upper()
+
         temp_search_reassigned = str(search)
 
-        temp_search_reassigned_maketrans = str.maketrans("<>'[],123456789abcdefghijklmnopqrstuvwxyz=?.;_", 46 * " ")
+        temp_search_reassigned_maketrans = str.maketrans("<>'[],123456789=?.;_", 20 * " ")
 
         search = temp_search_reassigned.translate(temp_search_reassigned_maketrans)
 
@@ -357,85 +362,85 @@ def main():
 
                 if character != ' ':
 
-                character_count = character_count + 1
+                    character_count = character_count + 1
 
-        print('total chars:', character_count, type(character_count), 'total white space:', white_space, type(white_space), 'total lines in file:', total_lines)
+        print('total chars:', character_count, type(character_count))
+        print('total white space:', white_space, type(white_space), 'total lines in file:', total_lines)
 
-   if type(cleave) is list:
+    if type(cleave) is list:
 
-       print('list cleave', cleave, type(cleave))
+        print('list cleave', cleave, type(cleave))
 
-       for i in cleave:
+        for i in cleave:
 
-           palindrome = i[::-1]
+            palindrome = i[::-1]
 
-           print('cleave:', i, type(i), 'palindrome: ', palindrome, type(palindrome))
+            print('cleave:', i, type(i), 'palindrome: ', palindrome, type(palindrome))
 
-           print('i', i, type(i))
+            print('i', i, type(i))
 
-           for nucleotidesOnly in parse_orf:
+            for nucleotidesOnly in parse_orf:
 
-               recognition = int(nucleotidesOnly.find(i))
+                recognition = int(nucleotidesOnly.find(i))
 
-               palindrome_recognition = int(nucleotidesOnly.find(i))
+                palindrome_recognition = int(nucleotidesOnly.find(i))
 
-               if recognition > 0:
+                if recognition > 0:
 
-                   graphic_line_recognition = 'Yes'
+                    graphic_line_recognition = 'Yes'
 
-               else:
+                else:
 
-                   graphic_line_recognition = 'No'
+                    graphic_line_recognition = 'No'
 
-               if palindrome_recognition > 0:
+                if palindrome_recognition > 0:
 
-                   graphic_line__palindrome_recognition = 'Yes'
+                    graphic_line__palindrome_recognition = 'Yes'
 
-               else:
+                else:
 
-                   graphic_line__palindrome_recognition = 'No'
+                    graphic_line__palindrome_recognition = 'No'
 
-               line_count = line_count + 1
+                line_count = line_count + 1
 
-               output_textbox.insert(INSERT,
-                                     "line:{} nucleotides:{} recognition:{} at:{} palindrome:{} at:{}"
-                                     .format(line_count, nucleotidesOnly, graphic_line_recognition, recognition,
-                                             graphic_line__palindrome_recognition, palindrome_recognition,))
+                output_textbox.insert(INSERT, "line:{} nucleotides:{} recognition:{} at:{} palindrome:{} at:{}"
+                                      .format(line_count, nucleotidesOnly, graphic_line_recognition, recognition,
+                                              graphic_line__palindrome_recognition, palindrome_recognition,))
 
-   elif type(cleave) is str:
+    elif type(cleave) is str:
 
-       palindrome = cleave[::-1]
+        palindrome = cleave[::-1]
 
-       print('cleave:', cleave, type(cleave), 'palindrome: ', palindrome, type(palindrome))
+        print('cleave:', cleave, type(cleave), 'palindrome: ', palindrome, type(palindrome))
 
-       for nucleotidesOnly in parse_orf:
+        for nucleotidesOnly in parse_orf:
 
-           recognition = int(nucleotidesOnly.find(cleave))
+            recognition = int(nucleotidesOnly.find(cleave))
 
-           palindrome_recognition = int(nucleotidesOnly.find(palindrome))
+            palindrome_recognition = int(nucleotidesOnly.find(palindrome))
 
-           if recognition > 0:
+            if recognition > 0:
 
-               graphic_line_recognition = 'Yes'
+                graphic_line_recognition = 'Yes'
 
-           else:
+            else:
 
-               graphic_line_recognition = 'No'
+                graphic_line_recognition = 'No'
 
-           if palindrome_recognition > 0:
+            if palindrome_recognition > 0:
 
-               graphic_line__palindrome_recognition = 'Yes'
+                graphic_line__palindrome_recognition = 'Yes'
 
-           else:
+            else:
 
-               graphic_line__palindrome_recognition = 'No'
+                graphic_line__palindrome_recognition = 'No'
 
-           line_count = line_count + 1
+            line_count = line_count + 1
 
-           output_textbox.insert(INSERT, "line:{} nucleotides:{} recognition:{} at:{} palindrome:{} at:{}"
-                                         .format(line_count, nucleotidesOnly, graphic_line_recognition, recognition,
-                                                 graphic_line__palindrome_recognition, palindrome_recognition,
-                                                 ))
+            output_textbox.insert(INSERT, "line:{} nucleotides:{} recognition:{} at:{} palindrome:{} at:{}"
+                                          .format(line_count, nucleotidesOnly, graphic_line_recognition, recognition,
+                                                  graphic_line__palindrome_recognition, palindrome_recognition,
+                                                  ))
 
 
 #  ----------------------------------button for main-------------------------------------------------------------------
@@ -455,25 +460,20 @@ scroll.grid(column=4, row=1)
 
 # --------------------------plasmid vectors-----------------------------------------------------------------------------
 
-
-
 #  -------------------------Highlight recognition-----------------------------------------------------------------------
 
 output_textbox.tag_config(cleave, background='red')
-
 #  -------------------------Text Box Delete-----------------------------------------------------------------------------
 
 
 def obliterate():
 
-   output_textbox.delete(1.0, END)
-   print('delete!')
+    output_textbox.delete(1.0, END)
+    print('delete!')
 
 
 delete_text_button = Button(root, width=20, text="Delete Output", command=obliterate)
 delete_text_button.grid(column=3, row=1)
 
 #  ------------------------------main loop----------------------------------------------------------------------------
-
 root.mainloop()
-
