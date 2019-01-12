@@ -1,5 +1,6 @@
 
 
+
 #  proxyCleave, Proxy Bioinformatics © 2018
 #  Written By Andrew Lamothe
 
@@ -36,7 +37,10 @@ def set_cleave():
 
     cleave_get = cleave_entry.get()
     cleave = cleave_get
-    cleave = cleave.upper()
+
+    if cleave not in enzymes.keys():
+        cleave = cleave.upper()
+
     print(cleave, type(cleave))
 
     for specificity in enzymes.keys():
