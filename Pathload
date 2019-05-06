@@ -579,8 +579,11 @@ scroll.grid(column=3, row=1,rowspan=5)
 
 def obliterate():
 
-   popup_textbox.delete(1.0, END)
-   print('delete!')
+ popup_textbox.delete(1.0, END)
+ print('delete!')
+
+ output_textbox.delete(1.0, END)
+
 
 delete_text_button = Button(root, width=20, text="Delete Output", command=obliterate)
 delete_text_button.grid(column=0, row=2)
