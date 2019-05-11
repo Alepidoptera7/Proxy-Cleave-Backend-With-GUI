@@ -18,12 +18,12 @@ degenerate_nucleotides = {'R': ['G', 'A'], 'Y': ['T', 'C'], 'M': ['A', 'C'], 'K'
 root = Tk()
 
 root.title("proxyCleave V1.3, Proxy Bioinformatics © 2018")
-root.configure(background='black')
-root.geometry("1000x1000")
+root.configure(background='purple')
+root.geometry("1000x1000+500+500")
 
 ProxyDongle = PhotoImage(file='PC.png')
 ProxyDongle = ProxyDongle.subsample(3, 3)
-Label(root, image=ProxyDongle, bg="black").grid(column=0, row=0)
+Label(root, image=ProxyDongle, bg="black").place(x = 10, y = 10)
 
 #  ----------------------------------CLEAVE---------------------------------------------------------------
 
@@ -208,12 +208,6 @@ def degenerate_handler():
            continue
 
 
-cleave_entry = StringVar()
-cleave1 = Entry(root, textvariable=cleave_entry, width=20).grid(column=1, row=0)
-
-cleave_button = Button(root, width=20, text="recognition specificity", command=set_cleave)
-cleave_button.grid(column=1, row=1)
-
 temp_cleave_reassigned = str(cleave)
 
 temp_cleave_reassigned_maketrans = str.maketrans("<>'[],123456789=?.;_", 20 * " ")
@@ -236,11 +230,6 @@ def set_orf():
    global ORF_get, ORF
    ORF_get = ORF_entry.get()
    ORF = ORF_get
-
-ORF1 = Entry(root, textvariable=ORF_entry, width=20).grid(column=1, row=3)
-
-ORF_button = Button(root, width=20, text="enter ORF", command=set_orf)
-ORF_button.grid(column=1, row=4)
 
 #  ------------------------------------------find slash in cleave----------------------------------------------------
 #  It may be more robust to .split('/') and then append to either side of the split than to make separate
@@ -366,10 +355,21 @@ def direct_file():
 
  return single
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ DELETE FUNCTION~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def obliterate():
+
+ print('delete!')
+
+ output_textbox.delete(1.0, END)
+
+
 #  -------------------------------------------main--------------------------------------------------------------------
 def main():
 
- global file
+ global file, file_check, path_check
+
+ palindrome = cleave[::-1]
 
  if(path_check == 1):
 
@@ -411,9 +411,33 @@ def main():
     popup.insert(INSERT, search)
     popup.grid(columnspan=6, rowspan=1)
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~INDIVIDUAL FILE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    popup.search(cleave, 1.0, END)
+
+    popup.tag_configure(cleave, foreground='black', background='pink')
+    pos = '1.0'
+    while True:
+        idx = popup.search(cleave, pos, END)
+        if not idx:
+            break
+        pos = '{}+{}c'.format(idx, len(cleave))
+        popup.tag_add(cleave, idx, pos)
+
+    popup.search(palindrome, 1.0, END)
+
+    popup.tag_configure(palindrome, foreground='black', background='purple')
+    pos = '1.0'
+    while True:
+        idx = popup.search(palindrome, pos, END)
+        if not idx:
+            break
+        pos = '{}+{}c'.format(idx, len(palindrome))
+        popup.tag_add(palindrome, idx, pos)
+
+ #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~INDIVIDUAL FILE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  if(file_check == 1):
+
+  file_check = 0
 
   file = direct_file()
 
@@ -425,131 +449,112 @@ def main():
 
    search = search.upper()
 
-   parse_orf = [search[i:i + ORF] for i in range(0, len(search), ORF)]
+   temp_search_reassigned = str(search)
 
-   character_count = 0
+   temp_search_reassigned_maketrans = str.maketrans("<>'[],123456789=?.;_", 20 * " ")
 
-   white_space = 0
+   lines = temp_search_reassigned.translate(temp_search_reassigned_maketrans)
 
-   line_count = 0
+   lines = str(lines.strip(' '))
+
+   lines = str(lines.strip(None))
+
+   lines = lines.replace(' ', '')
+
+   lines = lines.replace('\n', '')
+
+   search = [search[i:i + ORF] for i in range(0, len(search), ORF)]
 
    total_lines = 0
 
-   for line in parse_orf:
+   print(search)
 
-    temp_search_reassigned = str(search)
+   total_lines = total_lines + 1
 
-    temp_search_reassigned_maketrans = str.maketrans("<>'[],123456789=?.;_", 20 * " ")
+   print(search)
 
-    search = temp_search_reassigned.translate(temp_search_reassigned_maketrans)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~CLEAVE TYPE STRING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    search = str(search.strip(' '))
+  if type(cleave) is str:
 
-    search = search.replace(' ', '')
+   for lines in search:
 
-    total_lines = total_lines + 1
+    print(lines)
 
-    for character in line:
+    output_textbox.search(cleave, 1.0, END)
 
-     if character != ' ':
+    output_textbox.tag_configure(cleave, foreground='pink', background='black')
+    pos = '1.0'
+    while True:
+        idx = output_textbox.search(cleave, pos, END)
+        if not idx:
+            break
+        pos = '{}+{}c'.format(idx, len(cleave))
+        output_textbox.tag_add(cleave, idx, pos)
 
-      character_count = character_count + 1
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~CLEAVE TYPE STRING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    output_textbox.search(palindrome, 1.0, END)
 
-    if type(cleave) is str:
+    output_textbox.tag_configure(palindrome, foreground='purple', background='black')
+    pos = '1.0'
+    while True:
+        idx = output_textbox.search(palindrome, pos, END)
+        if not idx:
+            break
+        pos = '{}+{}c'.format(idx, len(palindrome))
+        output_textbox.tag_add(palindrome, idx, pos)
 
-     #print('list cleave', cleave, type(cleave))
-
-     palindrome = cleave[::-1]
-
-    #    print('cleave:', i, type(i), 'palindrome: ', palindrome, type(palindrome))
-
-        #print('i', i, type(i))
-
-     for nucleotidesOnly in parse_orf:
-
-      recognition = int(nucleotidesOnly.find(cleave))
-
-      palindrome_recognition = int(nucleotidesOnly.find(palindrome))
-
-      if recognition > 0:
-
-       graphic_line_recognition = 'Yes'
-
-      else:
-
-       graphic_line_recognition = 'No'
-
-      if palindrome_recognition > 0:
-
-       graphic_line__palindrome_recognition = 'Yes'
-
-      else:
-
-        graphic_line__palindrome_recognition = 'No'
-
-        line_count = line_count + 1
-
-      output_textbox.insert(INSERT, "line:{} nucleotides:{} recognition:{} at:{} palindrome:{} at:{}"
-                                  .format(line_count, nucleotidesOnly, graphic_line_recognition, recognition,
-                                          graphic_line__palindrome_recognition, palindrome_recognition, ))
+    output_textbox.insert(INSERT, lines)
 
 
+#  -----------------------TEXT BOXES FOR SINGLE FILE AND PATH ~~~~~~~~~~~~~~~~~~~---------------------------------------
 
-#  ----------------------------------button for file load-------------------------------------------------------------------
-
-file_button = Button(root, width=20, text="file upload")
-file_button.grid(column=2, row=4)
-file_button.config(command=direct_file)
-
-# ---------------------------------Path upload button--------------------------------------------------------------------
-
-Path1 = Entry(root, textvariable=path_entry, width=20).grid(column=2,row=0)
-
-path_button = Button(root, width=20, text="enter path", command=path_load)
-path_button.grid(column=2, row=1)
-
-#----------------------------------Process Button for Main______________________________________________________________
-
-process_button = Button(root, width=20, text="Process All Data")
-process_button.grid(column=0, row=1)
-process_button.config(command=main)
-
-#  -----------------------Text Box ~~~~~~~~~~~~~~~~~~~-----------------------------------------------------------------
-
-output_textbox = Text(root, state='normal', width=200, height=50, wrap=WORD)
-output_textbox.grid(columnspan=6, rowspan=1)
-
-popup_textbox = Text(root, state='normal', width=200, height=50, wrap=WORD)
-popup_textbox.grid(columnspan=6, rowspan=1)
+output_textbox = Text(root, state='normal', wrap=WORD, height = 500, width = 90)
+output_textbox.place(x = 200, y = 10)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~SCROLL BAR~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 scroll = tk.Scrollbar(root, command=output_textbox.yview)
-
-popup_textbox.configure(yscrollcommand=scroll.set)
-scroll.grid(columnspan=2, rowspan = 4, row = 0, sticky='ns')
+output_textbox.configure(yscrollcommand=scroll.set)
+scroll.place(x = 950, y = 10, height = 750)
 output_textbox['yscrollcommand'] = scroll.set
 
-# --------------------------plasmid vectors-----------------------------------------------------------------------------
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~CLEAVE BUTTON~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#  -------------------------Highlight recognition-----------------------------------------------------------------------
+cleave_entry = StringVar()
+cleave1 = Entry(root, textvariable=cleave_entry, width=20).place(x = 10, y = 200)
 
-#popup_textbox.tag_config(cleave, background='red')
+cleave_button = Button(root, width=20, text="recognition specificity", command=set_cleave)
+cleave_button.place(x = 10, y = 250)
 
-#  -------------------------Text Box Delete-----------------------------------------------------------------------------
+#_____________________________________________ORF______________________________________________________________________
 
-def obliterate():
+ORF1 = Entry(root, textvariable=ORF_entry, width=20).place(x = 10, y = 300)
 
- popup_textbox.delete(1.0, END)
- print('delete!')
+ORF_button = Button(root, width=20, text="enter ORF", command=set_orf)
+ORF_button.place(x = 10, y = 350)
 
- output_textbox.delete(1.0, END)
+#  ----------------------------------button for file load-------------------------------------------------------------------
 
+file_button = Button(root, width=20, text="file upload")
+file_button.place(x = 10, y = 400)
+file_button.config(command=direct_file)
+
+# ---------------------------------Path upload button--------------------------------------------------------------------
+
+Path1 = Entry(root, textvariable=path_entry, width=20).place(x = 10, y = 450)
+path_button = Button(root, width=20, text="enter path", command=path_load)
+path_button.place(x = 10, y = 500)
+
+#----------------------------------Process Button for Main______________________________________________________________
+
+process_button = Button(root, width=20, text="Process All Data")
+process_button.place(x = 10, y = 550)
+process_button.config(command=main)
+
+#  -------------------------Delete Button-----------------------------------------------------------------------------
 
 delete_text_button = Button(root, width=20, text="Delete Output", command=obliterate)
-delete_text_button.grid(column=0, row=2)
+delete_text_button.place(x = 10, y = 600)
 
 #  ------------------------------main loop----------------------------------------------------------------------------
 root.mainloop()
-
